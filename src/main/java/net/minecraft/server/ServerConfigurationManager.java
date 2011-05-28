@@ -198,7 +198,7 @@ public class ServerConfigurationManager {
         this.a(entityplayer.dimension).removePlayer(entityplayer);
         this.players.remove(entityplayer);
         this.server.a(entityplayer.dimension).removeEntity(entityplayer);
-        ChunkCoordinates chunkcoordinates = entityplayer.K();
+        ChunkCoordinates chunkcoordinates = entityplayer.M();
 
         entityplayer.dimension = i;
         EntityPlayer entityplayer1 = new EntityPlayer(this.server, this.server.a(entityplayer.dimension), entityplayer.name, new ItemInWorldManager(this.server.a(entityplayer.dimension)));
@@ -245,7 +245,7 @@ public class ServerConfigurationManager {
             entityplayer1.setPosition(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
         }
 
-        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) ((WorldServer)entityplayer1.world).getWorld().getEnvironment().getId()));
+        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) ((WorldServer) entityplayer1.world).getWorld().getEnvironment().getId()));
         entityplayer1.netServerHandler.a(entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
         this.a(entityplayer1, worldserver);
         this.a(entityplayer1.dimension).addPlayer(entityplayer1);
@@ -282,19 +282,19 @@ public class ServerConfigurationManager {
             d0 /= d2;
             d1 /= d2;
             entityplayer.setPositionRotation(d0, entityplayer.locY, d1, entityplayer.yaw, entityplayer.pitch);
-            if (entityplayer.Q()) {
+            if (entityplayer.S()) {
                 worldserver.entityJoinedWorld(entityplayer, false);
             }
         } else {
             d0 *= d2;
             d1 *= d2;
             entityplayer.setPositionRotation(d0, entityplayer.locY, d1, entityplayer.yaw, entityplayer.pitch);
-            if (entityplayer.Q()) {
+            if (entityplayer.S()) {
                 worldserver.entityJoinedWorld(entityplayer, false);
             }
         }
 
-        if (entityplayer.Q()) {
+        if (entityplayer.S()) {
             worldserver1.addEntity(entityplayer);
             entityplayer.setPositionRotation(d0, entityplayer.locY, d1, entityplayer.yaw, entityplayer.pitch);
             worldserver1.entityJoinedWorld(entityplayer, false);
@@ -307,7 +307,7 @@ public class ServerConfigurationManager {
         entityplayer.netServerHandler.a(entityplayer.locX, entityplayer.locY, entityplayer.locZ, entityplayer.yaw, entityplayer.pitch);
         entityplayer.a((World) worldserver1);
         this.a(entityplayer, worldserver1);
-        entityplayer.a(entityplayer.defaultContainer);
+        this.g(entityplayer);
     }
 
     public void b() {
@@ -617,9 +617,14 @@ public class ServerConfigurationManager {
     }
 
     public void a(EntityPlayer entityplayer, WorldServer worldserver) {
+        entityplayer.netServerHandler.sendPacket(new Packet4UpdateTime(worldserver.getTime()));
         if (worldserver.v()) {
-            entityplayer.netServerHandler.sendPacket(new Packet4UpdateTime(worldserver.getTime()));
             entityplayer.netServerHandler.sendPacket(new Packet70Bed(1));
         }
+    }
+
+    public void g(EntityPlayer entityplayer) {
+        entityplayer.a(entityplayer.defaultContainer);
+        entityplayer.B();
     }
 }

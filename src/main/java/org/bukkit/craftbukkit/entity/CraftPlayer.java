@@ -178,7 +178,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             entity.dead = false;
 
             entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-            if (entity.Q()) {
+            if (entity.S()) {
                 oldWorld.entityJoinedWorld(entity, false);
                 newWorld.addEntity(entity);
                 entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
