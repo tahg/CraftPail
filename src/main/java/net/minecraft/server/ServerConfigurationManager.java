@@ -245,7 +245,7 @@ public class ServerConfigurationManager {
             entityplayer1.setPosition(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
         }
 
-        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) ((WorldServer) entityplayer1.world).getWorld().getEnvironment().getId()));
+        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (worldserver.getWorld().getEnvironment().getId())));
         entityplayer1.netServerHandler.a(entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
         this.a(entityplayer1, worldserver);
         this.a(entityplayer1.dimension).addPlayer(entityplayer1);
