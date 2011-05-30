@@ -192,7 +192,12 @@ public class ServerConfigurationManager {
         // CraftBukkit end
     }
 
+    // CraftBukkit start
     public EntityPlayer a(EntityPlayer entityplayer, int i) {
+        return a(entityplayer, i, true);
+    }
+
+    public EntityPlayer a(EntityPlayer entityplayer, int i, boolean spawn) {
         this.server.b(entityplayer.dimension).trackPlayer(entityplayer);
         this.server.b(entityplayer.dimension).untrackEntity(entityplayer);
         this.a(entityplayer.dimension).removePlayer(entityplayer);
@@ -205,26 +210,33 @@ public class ServerConfigurationManager {
 
         entityplayer1.id = entityplayer.id;
         entityplayer1.netServerHandler = entityplayer.netServerHandler;
+        entityplayer1.netServerHandler.player = entityplayer1;
         WorldServer worldserver = this.server.a(entityplayer.dimension);
 
-        // CraftBukkit start - transfer internal variables
+        entityplayer1.dimension = i;
         entityplayer1.displayName = entityplayer.displayName;
         entityplayer1.compassTarget = entityplayer.compassTarget;
         entityplayer1.fauxSleeping = entityplayer.fauxSleeping;
-        // CraftBukkit end
 
-        if (chunkcoordinates != null) {
-            ChunkCoordinates chunkcoordinates1 = EntityHuman.getBed(this.server.a(entityplayer.dimension), chunkcoordinates);
+        if (spawn) {
+            if(chunkcoordinates != null) {
+                ChunkCoordinates chunkcoordinates1 = EntityHuman.getBed(this.server.a(entityplayer.dimension), chunkcoordinates);
 
-            if (chunkcoordinates1 != null) {
-                entityplayer1.setPositionRotation((double) ((float) chunkcoordinates1.x + 0.5F), (double) ((float) chunkcoordinates1.y + 0.1F), (double) ((float) chunkcoordinates1.z + 0.5F), 0.0F, 0.0F);
-                entityplayer1.a(chunkcoordinates);
-            } else {
-                entityplayer1.netServerHandler.sendPacket(new Packet70Bed(0));
+                if (chunkcoordinates1 != null) {
+                    entityplayer1.setPositionRotation((double) ((float) chunkcoordinates1.x + 0.5F), (double) ((float) chunkcoordinates1.y + 0.1F), (double) ((float) chunkcoordinates1.z + 0.5F), 0.0F, 0.0F);
+                    entityplayer1.a(chunkcoordinates);
+                } else {
+                    entityplayer1.netServerHandler.sendPacket(new Packet70Bed(0));
+                }
             }
         }
+        else {
+            entityplayer1.setPositionRotation(entityplayer.locX, entityplayer.locY, entityplayer.locZ, entityplayer.yaw, entityplayer.pitch);
+            entityplayer1.inventory = entityplayer.inventory;
+            entityplayer1.activeContainer = entityplayer.activeContainer;
+            entityplayer1.defaultContainer = entityplayer.defaultContainer;
+        }
 
-        // CraftBukkit start
         Player respawnPlayer = cserver.getPlayer(entityplayer);
         Location respawnLocation = new Location(respawnPlayer.getWorld(), entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
 
@@ -245,18 +257,19 @@ public class ServerConfigurationManager {
             entityplayer1.setPosition(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
         }
 
-        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (worldserver.getWorld().getEnvironment().getId())));
+        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (worldserver.getWorld().getEnvironment().getId()))); // CraftBukkit
         entityplayer1.netServerHandler.a(entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
         this.a(entityplayer1, worldserver);
         this.a(entityplayer1.dimension).addPlayer(entityplayer1);
         worldserver.addEntity(entityplayer1);
         this.players.add(entityplayer1);
-        entityplayer1.syncInventory();
+        if (spawn) entityplayer1.syncInventory(); // CraftBukkit
         entityplayer1.w();
         return entityplayer1;
     }
 
-    public void f(EntityPlayer entityplayer) {
+    // CraftBukkit - changed signature
+    public EntityPlayer f(EntityPlayer entityplayer) {
         WorldServer worldserver = this.server.a(entityplayer.dimension);
         boolean flag = false;
         byte b0;
@@ -267,18 +280,19 @@ public class ServerConfigurationManager {
             b0 = -1;
         }
 
-        entityplayer.dimension = b0;
-        WorldServer worldserver1 = this.server.a(entityplayer.dimension);
+        // CraftBukkit start
+        // entityplayer.dimension = b0;
+        WorldServer worldserver1 = this.server.a(b0);
 
-        // Craftbukkit
-        entityplayer.netServerHandler.sendPacket(new Packet9Respawn((byte) ((WorldServer)entityplayer.world).getWorld().getEnvironment().getId()));
+        // entityplayer.netServerHandler.sendPacket(new Packet9Respawn((byte) ((WorldServer)entityplayer.world).getWorld().getEnvironment().getId()));
+        // Craftbukkit end
         worldserver.removeEntity(entityplayer);
         entityplayer.dead = false;
         double d0 = entityplayer.locX;
         double d1 = entityplayer.locZ;
         double d2 = 8.0D;
 
-        if (entityplayer.dimension == -1) {
+        if (b0 == -1) { // CraftBukkit
             d0 /= d2;
             d1 /= d2;
             entityplayer.setPositionRotation(d0, entityplayer.locY, d1, entityplayer.yaw, entityplayer.pitch);
@@ -295,19 +309,21 @@ public class ServerConfigurationManager {
         }
 
         if (entityplayer.S()) {
-            worldserver1.addEntity(entityplayer);
+            // worldserver1.addEntity(entityplayer); // CraftBukkit
             entityplayer.setPositionRotation(d0, entityplayer.locY, d1, entityplayer.yaw, entityplayer.pitch);
             worldserver1.entityJoinedWorld(entityplayer, false);
             worldserver1.chunkProviderServer.a = true;
             (new PortalTravelAgent()).a(worldserver1, entityplayer);
             worldserver1.chunkProviderServer.a = false;
         }
-
+        /* CraftBukkit start
         this.a(entityplayer);
         entityplayer.netServerHandler.a(entityplayer.locX, entityplayer.locY, entityplayer.locZ, entityplayer.yaw, entityplayer.pitch);
         entityplayer.a((World) worldserver1);
         this.a(entityplayer, worldserver1);
         this.g(entityplayer);
+        */ // CraftBukkit end
+        return a(entityplayer, b0, false);
     }
 
     public void b() {
