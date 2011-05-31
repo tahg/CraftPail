@@ -89,7 +89,7 @@ public class EntityArrow extends Entity {
 
         if (i > 0) {
             Block.byId[i].a(this.world, this.d, this.e, this.f);
-            if (Block.byId[i].d(this.world, this.d, this.e, this.f).a(Vec3D.create(this.locX, this.locY, this.locZ))) {
+            if (Block.byId[i].d(this.world, this.d, this.e, this.f) != null && Block.byId[i].d(this.world, this.d, this.e, this.f).a(Vec3D.create(this.locX, this.locY, this.locZ))) {
                 this.i = true;
             }
         }

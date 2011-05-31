@@ -78,6 +78,12 @@ public class ServerConfigurationManager {
 
     public void a(EntityPlayer entityplayer) {
         // Craftbukkit - removed playermanagers
+        for(WorldServer world : this.server.worlds) {
+            if(world.manager.a.contains(entityplayer)) {
+                world.manager.removePlayer(entityplayer);
+                break;
+            }
+        }
         this.a(entityplayer.dimension).addPlayer(entityplayer);
         WorldServer worldserver = this.server.a(entityplayer.dimension);
 
@@ -257,13 +263,16 @@ public class ServerConfigurationManager {
             entityplayer1.setPosition(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
         }
 
-        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (worldserver.getWorld().getEnvironment().getId()))); // CraftBukkit
+        byte actualDimension = (byte) (worldserver.getWorld().getEnvironment().getId());
+        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (actualDimension >= 0 ? -1 : 0))); // CraftBukkit
+        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn(actualDimension)); // CraftBukkit
         entityplayer1.netServerHandler.a(entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch);
         this.a(entityplayer1, worldserver);
         this.a(entityplayer1.dimension).addPlayer(entityplayer1);
         worldserver.addEntity(entityplayer1);
         this.players.add(entityplayer1);
         if (spawn) entityplayer1.syncInventory(); // CraftBukkit
+        entityplayer1.a(entityplayer1.activeContainer);
         entityplayer1.w();
         return entityplayer1;
     }
