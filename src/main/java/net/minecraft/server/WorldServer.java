@@ -119,7 +119,7 @@ public class WorldServer extends World implements BlockChangeDelegate {
             }
             // CraftBukkit end
 
-            this.server.serverConfigurationManager.a(entity.locX, entity.locY, entity.locZ, 512.0D, this.worldProvider.dimension, new Packet71Weather(entity));
+            this.server.serverConfigurationManager.a(entity.locX, entity.locY, entity.locZ, 512.0D, this.dimension, new Packet71Weather(entity));
             return true;
         } else {
             return false;
@@ -129,7 +129,7 @@ public class WorldServer extends World implements BlockChangeDelegate {
     public void a(Entity entity, byte b0) {
         Packet38EntityStatus packet38entitystatus = new Packet38EntityStatus(entity.id, b0);
 
-        this.server.b(this.worldProvider.dimension).b(entity, packet38entitystatus);
+        this.server.b(this.dimension).b(entity, packet38entitystatus);
     }
 
     public Explosion createExplosion(Entity entity, double d0, double d1, double d2, float f, boolean flag) {
@@ -141,13 +141,13 @@ public class WorldServer extends World implements BlockChangeDelegate {
         }
         // CraftBukkit end
 
-        this.server.serverConfigurationManager.a(d0, d1, d2, 64.0D, this.worldProvider.dimension, new Packet60Explosion(d0, d1, d2, f, explosion.g));
+        this.server.serverConfigurationManager.a(d0, d1, d2, 64.0D, this.dimension, new Packet60Explosion(d0, d1, d2, f, explosion.g));
         return explosion;
     }
 
     public void d(int i, int j, int k, int l, int i1) {
         super.d(i, j, k, l, i1);
-        this.server.serverConfigurationManager.a((double) i, (double) j, (double) k, 64.0D, this.worldProvider.dimension, new Packet54PlayNoteBlock(i, j, k, l, i1));
+        this.server.serverConfigurationManager.a((double) i, (double) j, (double) k, 64.0D, this.dimension, new Packet54PlayNoteBlock(i, j, k, l, i1));
     }
 
     public void saveLevel() {
